@@ -32,7 +32,7 @@ jobs:
       - name: Run impact analysis
         working-directory: /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           python -m src.analyzer \
             --diff-file /tmp/pr.diff \
