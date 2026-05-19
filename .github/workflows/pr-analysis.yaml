@@ -22,11 +22,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ github.workspace }}/_runner
 
       - name: Install dependencies
-        run: pip install -r ${{ github.workspace }}/../infra-config-llmops/requirements.txt
+        run: pip install -r /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops/requirements.txt
 
       - name: Generate PR diff
         run: git diff origin/main...HEAD > /tmp/pr.diff
