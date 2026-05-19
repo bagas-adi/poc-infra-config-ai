@@ -1,0 +1,39 @@
+name: Architecture Summary
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/config/**'
+      - '**/terraform/**'
+      - '**/ansible/**'
+
+jobs:
+  summarize:
+    name: Generate Architecture Summary
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r infra-config-llmops/requirements.txt
+
+      - name: Generate architecture summary
+        working-directory: infra-config-llmops
+        run: |
+          python -m src.summarizer \
+            --output ../poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
+
+      - name: Commit updated summary
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
+          git diff --cached --quiet || git commit -m "docs: update architecture summary [skip ci]"
+          git push
