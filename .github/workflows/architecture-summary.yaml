@@ -12,6 +12,7 @@ jobs:
   summarize:
     name: Generate Architecture Summary
     runs-on: self-hosted
+    environment: Local
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,15 +23,17 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r infra-config-llmops/requirements.txt
+        run: pip install -r /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops/requirements.txt
 
       - name: Generate architecture summary
-        working-directory: infra-config-llmops
+        working-directory: /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops
         run: |
           python -m src.summarizer \
             --output ../poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
 
       - name: Commit updated summary
+        env:
+          GITHUB_TOKEN:  ${{ secrets.GH_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
