@@ -1,0 +1,62 @@
+---
+- name: Deploy Consul
+  hosts: consul
+  become: true
+
+  vars:
+    consul_data_dir: "/opt/consul/data"
+
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: true
+
+    - name: Add HashiCorp GPG key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add HashiCorp repository
+      apt_repository:
+        repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+        state: present
+        filename: hashicorp
+
+    - name: Install Consul
+      apt:
+        name: consul
+        state: present
+        update_cache: true
+
+    - name: Create Consul data directory
+      file:
+        path: "{{ consul_data_dir }}"
+        state: directory
+        owner: consul
+        group: consul
+        mode: "0755"
+
+    - name: Deploy Consul configuration
+      copy:
+        src: ../config/consul.hcl
+        dest: /etc/consul.d/consul.hcl
+        owner: consul
+        group: consul
+        mode: "0640"
+      notify: reload consul
+
+    - name: Enable and start Consul
+      systemd:
+        name: consul
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: reload consul
+      command: consul reload

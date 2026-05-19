@@ -1,0 +1,56 @@
+---
+- name: Deploy Kibana
+  hosts: kibana
+  become: true
+
+  vars:
+    kibana_version: "8.x"
+
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - gnupg2
+          - curl
+        state: present
+        update_cache: true
+
+    - name: Add Elasticsearch GPG key
+      apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+
+    - name: Add Elastic repository
+      apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/{{ kibana_version }}/apt stable main"
+        state: present
+        filename: elastic
+
+    - name: Install Kibana
+      apt:
+        name: kibana
+        state: present
+        update_cache: true
+
+    - name: Deploy Kibana configuration
+      copy:
+        src: ../config/kibana.yml
+        dest: /etc/kibana/kibana.yml
+        owner: kibana
+        group: kibana
+        mode: "0660"
+      notify: restart kibana
+
+    - name: Enable and start Kibana
+      systemd:
+        name: kibana
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: restart kibana
+      systemd:
+        name: kibana
+        state: restarted

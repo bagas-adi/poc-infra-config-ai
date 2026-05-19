@@ -1,0 +1,36 @@
+---
+- name: Deploy MySQL
+  hosts: mysql
+  become: true
+
+  tasks:
+    - name: Install MySQL Server
+      apt:
+        name:
+          - mysql-server
+          - mysql-client
+          - python3-mysqldb
+        state: present
+        update_cache: true
+
+    - name: Deploy MySQL configuration
+      copy:
+        src: ../config/mysqld.cnf
+        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart mysql
+
+    - name: Enable and start MySQL
+      systemd:
+        name: mysql
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: restart mysql
+      systemd:
+        name: mysql
+        state: restarted

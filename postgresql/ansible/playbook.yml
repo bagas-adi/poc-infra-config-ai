@@ -1,0 +1,65 @@
+---
+- name: Deploy PostgreSQL
+  hosts: postgresql
+  become: true
+
+  vars:
+    pg_version: "16"
+
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - curl
+          - ca-certificates
+          - gnupg
+        state: present
+        update_cache: true
+
+    - name: Add PostgreSQL APT repository key
+      apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add PostgreSQL APT repository
+      apt_repository:
+        repo: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+        state: present
+        filename: pgdg
+
+    - name: Install PostgreSQL
+      apt:
+        name: "postgresql-{{ pg_version }}"
+        state: present
+        update_cache: true
+
+    - name: Deploy PostgreSQL configuration
+      copy:
+        src: ../config/postgresql.conf
+        dest: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
+        owner: postgres
+        group: postgres
+        mode: "0644"
+      notify: reload postgresql
+
+    - name: Deploy pg_hba.conf
+      copy:
+        src: ../config/pg_hba.conf
+        dest: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
+        owner: postgres
+        group: postgres
+        mode: "0640"
+      notify: reload postgresql
+
+    - name: Enable and start PostgreSQL
+      systemd:
+        name: postgresql
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: reload postgresql
+      systemd:
+        name: postgresql
+        state: reloaded

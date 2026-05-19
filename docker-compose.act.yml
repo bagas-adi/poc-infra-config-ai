@@ -1,0 +1,48 @@
+services:
+  act-terraform:
+    image: catthehacker/ubuntu:act-latest
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /workspace
+    environment:
+      - ACT=true
+    entrypoint: >
+      sh -c "
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg &&
+        echo 'deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com jammy main' > /etc/apt/sources.list.d/hashicorp.list &&
+        apt-get update && apt-get install -y terraform &&
+        act -W .github/workflows/terraform.yml --container-architecture linux/amd64
+      "
+
+  act-ansible:
+    image: catthehacker/ubuntu:act-latest
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /workspace
+    environment:
+      - ACT=true
+    entrypoint: >
+      sh -c "
+        apt-get update && apt-get install -y python3-pip &&
+        pip3 install ansible ansible-lint &&
+        act -W .github/workflows/ansible.yml --container-architecture linux/amd64
+      "
+
+  act-all:
+    image: catthehacker/ubuntu:act-latest
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /workspace
+    environment:
+      - ACT=true
+    entrypoint: >
+      sh -c "
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg &&
+        echo 'deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com jammy main' > /etc/apt/sources.list.d/hashicorp.list &&
+        apt-get update && apt-get install -y terraform python3-pip &&
+        pip3 install ansible ansible-lint &&
+        act --container-architecture linux/amd64
+      "
