@@ -30,7 +30,7 @@ jobs:
         working-directory: /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops
         run: |
           python -m src.summarizer \
-            --output ../poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
+            --output /Users/bagas.pamungkas/projects/poc-task/llm-mac/poc-infra-config-ai/_runner/_work/poc-infra-config-ai/poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
 
       - name: Commit updated summary
         env:
@@ -38,6 +38,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add  /Users/bagas.pamungkas/projects/poc-task/llm-mac/poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
+          git add /Users/bagas.pamungkas/projects/poc-task/llm-mac/poc-infra-config-ai/_runner/_work/poc-infra-config-ai/poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
           git diff --cached --quiet || git commit -m "docs: update architecture summary [skip ci]"
           git push
