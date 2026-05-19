@@ -30,7 +30,7 @@ jobs:
         run: git diff origin/main...HEAD > /tmp/pr.diff
 
       - name: Run impact analysis
-        working-directory: infra-config-llmops
+        working-directory: /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
