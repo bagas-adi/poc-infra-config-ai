@@ -28,7 +28,10 @@ jobs:
         run: pip install -r /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops/requirements.txt
 
       - name: Generate PR diff
-        run: git diff origin/main...HEAD > /tmp/pr.diff
+        run: |
+          git diff origin/main...HEAD > /tmp/pr.diff
+          echo "=== Diff size: $(wc -c < /tmp/pr.diff) bytes ==="
+          cat /tmp/pr.diff
 
       - name: Run impact analysis
         working-directory: /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops
