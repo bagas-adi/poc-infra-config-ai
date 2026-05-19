@@ -7,7 +7,7 @@ Centralized infrastructure repository for managing infrastructure components usi
 | Component     | CPUs | Memory | Disk | Port(s)           |
 |---------------|------|--------|------|--------------------|
 | Elasticsearch | 2    | 4G     | 20G  | 9200, 9300         |
-| Kibana        | 2    | 2G     | 10G  | 5601               |
+| Kibana        | 2    | 2G     | 10G  | 5670               |
 | HAProxy       | 1    | 1G     | 5G   | 80, 8404 (stats)   |
 | Consul        | 1    | 1G     | 5G   | 8500 (UI), 8600    |
 | PostgreSQL    | 2    | 2G     | 10G  | 5432               |
