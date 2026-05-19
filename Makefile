@@ -9,7 +9,7 @@ INVENTORY := shared/ansible/inventory/hosts.yml
 	$(addprefix terraform-destroy-,$(COMPONENTS)) \
 	$(addprefix ansible-,$(COMPONENTS)) \
 	terraform-init-all terraform-plan-all terraform-apply-all terraform-destroy-all \
-	ansible-all ansible-lint act act-terraform act-ansible
+	ansible-all ansible-lint setup-runner start-runner
 
 help:
 	@echo "Usage: make <target>"
@@ -30,9 +30,8 @@ help:
 	@echo "  ansible-lint            Lint all Ansible playbooks"
 	@echo "  all                     Provision all VMs and deploy all configs"
 	@echo "  destroy                 Tear down all Multipass VMs"
-	@echo "  act                     Run all GitHub workflows locally via act"
-	@echo "  act-terraform           Run Terraform workflow locally via act"
-	@echo "  act-ansible             Run Ansible workflow locally via act"
+	@echo "  setup-runner            Download and configure a self-hosted GitHub Actions runner"
+	@echo "  start-runner            Start the self-hosted runner interactively"
 	@echo ""
 	@echo "Components: $(COMPONENTS)"
 
@@ -87,13 +86,10 @@ all: terraform-apply-all ansible-all
 destroy: terraform-destroy-all
 	@echo "All Multipass VMs destroyed."
 
-# --- Local CI with act ---
+# --- Self-hosted GitHub Actions Runner ---
 
-act:
-	docker compose -f docker-compose.act.yml run --rm act-all
+setup-runner:
+	./scripts/setup-runner.sh
 
-act-terraform:
-	docker compose -f docker-compose.act.yml run --rm act-terraform
-
-act-ansible:
-	docker compose -f docker-compose.act.yml run --rm act-ansible
+start-runner:
+	cd _runner && ./run.sh

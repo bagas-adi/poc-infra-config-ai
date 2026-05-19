@@ -12,6 +12,7 @@ jobs:
   analyze:
     name: LLM Impact Analysis
     runs-on: self-hosted
+    environment: Local
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,15 +25,18 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r infra-config-llmops/requirements.txt
+        run: pip install -r /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops/requirements.txt
 
       - name: Generate PR diff
-        run: git diff origin/main...HEAD > /tmp/pr.diff
+        run: |
+          git diff origin/main...HEAD > /tmp/pr.diff
+          echo "=== Diff size: $(wc -c < /tmp/pr.diff) bytes ==="
+          cat /tmp/pr.diff
 
       - name: Run impact analysis
-        working-directory: infra-config-llmops
+        working-directory: /Users/bagas.pamungkas/projects/poc-task/llm-mac/infra-config-llmops
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN:  ${{ secrets.GH_TOKEN }}
         run: |
           python -m src.analyzer \
             --diff-file /tmp/pr.diff \

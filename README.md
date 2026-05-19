@@ -30,8 +30,8 @@ Centralized infrastructure repository for managing infrastructure components usi
 │   ├── terraform/modules/multipass-vm/   # Reusable VM module
 │   └── ansible/                          # Shared inventory and config
 ├── .github/workflows/    # CI/CD pipelines
-├── docker-compose.act.yml  # Local CI runner
-├── .actrc                  # act defaults
+├── scripts/
+│   └── setup-runner.sh   # Self-hosted runner installer
 └── Makefile                # Convenience targets
 ```
 
@@ -40,7 +40,6 @@ Centralized infrastructure repository for managing infrastructure components usi
 - [Multipass](https://multipass.run/) installed
 - [Terraform](https://www.terraform.io/downloads) >= 1.0
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/) >= 2.15
-- [Docker](https://docs.docker.com/get-docker/) (for local CI with act)
 
 ## Quick Start
 
@@ -94,20 +93,49 @@ make all                      # Apply + deploy everything
 make destroy                  # Destroy all VMs
 ```
 
-### Local CI (nektos/act)
+### Self-Hosted Runner
 
 ```bash
-make act              # Run all GitHub workflows locally
-make act-terraform    # Run Terraform workflow only
-make act-ansible      # Run Ansible workflow only
+make setup-runner     # Download and configure a GitHub Actions self-hosted runner
+make start-runner     # Start the runner interactively
 ```
 
 ## GitHub Actions
 
-Two workflows are included:
+Two workflows are included, configured to run on a **self-hosted runner**:
 
 - **terraform.yml** -- Triggered on changes to `**/terraform/**`. Runs validate, format check, plan (on PR), and apply (on push to main) using a matrix over all 6 components.
 - **ansible.yml** -- Triggered on changes to `**/ansible/**` or `**/config/**`. Runs ansible-lint, syntax check, and deploy using a matrix over all 6 components.
+
+### Setting Up the Self-Hosted Runner
+
+The workflows use `runs-on: self-hosted`, which requires a local runner. The setup script handles downloading and configuring it:
+
+```bash
+# Interactive setup (prompts for repo URL and token)
+./scripts/setup-runner.sh
+
+# Or pass credentials via environment variables
+RUNNER_REPO_URL=https://github.com/owner/repo \
+RUNNER_TOKEN=AXXXX... \
+./scripts/setup-runner.sh
+```
+
+To get a runner registration token, go to your repository on GitHub: **Settings > Actions > Runners > New self-hosted runner**.
+
+Once configured, start the runner:
+
+```bash
+make start-runner
+```
+
+On Linux, you can also install it as a system service:
+
+```bash
+cd _runner
+sudo ./svc.sh install
+sudo ./svc.sh start
+```
 
 ## Terraform
 
