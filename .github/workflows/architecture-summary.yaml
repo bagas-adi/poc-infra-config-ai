@@ -38,6 +38,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
+          git add  /Users/bagas.pamungkas/projects/poc-task/llm-mac/poc-infra-config-ai/ARCHITECTURE_SUMMARY.md
           git diff --cached --quiet || git commit -m "docs: update architecture summary [skip ci]"
           git push
