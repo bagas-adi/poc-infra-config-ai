@@ -29,7 +29,7 @@ jobs:
 
       - name: Generate PR diff
         run: |
-          git diff origin/main...HEAD > /tmp/pr.diff
+          git diff origin/main...HEAD -- '**/config/**' '**/terraform/**' '**/ansible/**' > /tmp/pr.diff
           echo "=== Diff size: $(wc -c < /tmp/pr.diff) bytes ==="
           cat /tmp/pr.diff
 
