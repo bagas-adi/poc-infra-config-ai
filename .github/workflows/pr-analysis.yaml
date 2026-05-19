@@ -23,10 +23,10 @@ jobs:
         with:
           python-version: '3.12'
         env:
-          AGENT_TOOLSDIRECTORY: /Users/bagas.pamungkas/projects/poc-task/llm-mac/poc-infra-config-ai/_runner
+          AGENT_TOOLSDIRECTORY: ${{ github.workspace }}/_runner
 
       - name: Install dependencies
-        run: pip install -r infra-config-llmops/requirements.txt
+        run: pip install -r ${{ github.workspace }}/../infra-config-llmops/requirements.txt
 
       - name: Generate PR diff
         run: git diff origin/main...HEAD > /tmp/pr.diff
