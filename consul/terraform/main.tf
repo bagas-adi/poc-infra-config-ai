@@ -5,6 +5,9 @@ terraform {
       version = "~> 1.4"
     }
   }
+  backend "local" {
+    path = "terraform.tfstate"
+  }
 }
 
 provider "multipass" {}
